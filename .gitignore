@@ -1,0 +1,20 @@
+# Ignore Deno cache
+/.deno/
+
+# Ignore environment variable files
+.env
+.env.local
+
+# Ignore build artifacts (if applicable)
+dist/
+build/
+
+# Ignore log files
+*.log
+
+# Ignore coverage reports (if applicable)
+coverage/
+*.lcov
+
+# Ignore IDE or editor files
+.vscode/
