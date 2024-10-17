@@ -1,8 +1,10 @@
 import { Router } from "@oak/oak/router";
 import { getAll } from "./controllers/get-items.ts";
+import type { Context } from "@oak/oak";
 
-const router = new Router();
+const router = new Router({prefix: "/tarkov-cc-api"});
 
-router.get("/tarkov-cc-api", getAll);
+router.get("/", getAll);
+router.get("/health", (ctx: Context) => {ctx.response.body = "ok"});
 
 export default router;
