@@ -14,6 +14,8 @@ function parseConf() {
     const host = Deno.env.get("MONGO_HOST");
     const database = Deno.env.get("MONGO_DATABASE");
 
+    const port = Number(Deno.env.get("PORT")) || 8042;
+
     if (!username)
       throw new ConfigError("Missing MONGO_USERNAME in environment variables.");
     if (!password)
@@ -32,6 +34,9 @@ function parseConf() {
         host,
         database,
       },
+      server: {
+        port
+      }
     };
   } catch (err) {
     console.error(err);
