@@ -1,16 +1,12 @@
-import { MongoClient, Database, Collection, type Document } from "@db/mongo";
+import { Collection, Database, type Document, MongoClient } from "@db/mongo";
 import { config } from "../config.ts";
 
 class DatabaseService {
   private client: MongoClient = new MongoClient();
   private db!: Database;
 
-  constructor() {}
-
   async connect() {
-    this.db = await new MongoClient().connect(
-      `mongodb+srv://${config.db.username}:${config.db.encodedPassword}@tarkov.t2hle.mongodb.net/${config.db.database}?authMechanism=SCRAM-SHA-1`
-    );
+    this.db = await new MongoClient().connect(config.db.mongoConnectionUri);
   }
 
   getCollection<T extends Document>(collectionName: string): Collection<T> {

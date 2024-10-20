@@ -9,34 +9,23 @@ class ConfigError extends Error {
 
 function parseConf() {
   try {
-    const username = Deno.env.get("MONGO_USERNAME");
-    const password = Deno.env.get("MONGO_PASSWORD");
-    const host = Deno.env.get("MONGO_HOST");
-    const database = Deno.env.get("MONGO_DATABASE");
+    const mongoConnectionUri = Deno.env.get("MONGO_CONNECTION_URI");
 
     const port = Number(Deno.env.get("PORT")) || 8042;
 
-    if (!username)
-      throw new ConfigError("Missing MONGO_USERNAME in environment variables.");
-    if (!password)
-      throw new ConfigError("Missing MONGO_PASSWORD in environment variables.");
-    if (!host)
-      throw new ConfigError("Missing MONGO_HOST in environment variables.");
-    if (!database)
-      throw new ConfigError("Missing MONGO_DATABASE in environment variables.");
-
-    const encodedPassword = encodeURIComponent(password);
+    if (!mongoConnectionUri) {
+      throw new ConfigError(
+        "Missing MONGO_CONNECTION_URI in environment variables.",
+      );
+    }
 
     return {
       db: {
-        username,
-        encodedPassword,
-        host,
-        database,
+        mongoConnectionUri,
       },
       server: {
-        port
-      }
+        port,
+      },
     };
   } catch (err) {
     console.error(err);
