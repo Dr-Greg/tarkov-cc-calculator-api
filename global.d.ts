@@ -5,6 +5,7 @@ declare global {
     shortName: string;
     basePrice: number;
     lastLowPrice: number;
+    types: [string];
   }
 }
 export {};
