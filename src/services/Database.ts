@@ -13,11 +13,6 @@ class DatabaseService {
     return this.db.collection<T>(collectionName);
   }
 
-  fetchAll<T extends Document>(collectionName: string): Promise<Array<T>> {
-    const collection = this.getCollection<T>(collectionName);
-    return collection.find().toArray();
-  }
-
   close() {
     return this.client.close();
   }
