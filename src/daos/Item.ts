@@ -1,4 +1,4 @@
-import type { Collection, Filter, FindOptions } from "@db/mongo";
+import type { Collection, Document, Filter, FindOptions } from "@db/mongo";
 import database from "../services/Database.ts";
 
 class ItemDAO {
@@ -13,6 +13,10 @@ class ItemDAO {
         options: FindOptions = {},
     ): Promise<Array<Item>> {
         return this.collection.find(filter, options).toArray();
+    }
+
+    aggregate(pipeline: Array<Document>): Promise<Array<Item>> {
+        return this.collection.aggregate(pipeline).toArray();
     }
 }
 
