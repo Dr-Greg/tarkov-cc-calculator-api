@@ -4,7 +4,7 @@ import objectIDSchema from "./objectID.schema.ts";
 
 const bestItemComboSchema = z.object({
     types: z.array(z.enum(ALL_TYPES)).transform((types) =>
-        types.length ? types : DEFAULT_TYPES
+        types.length ? types : [...DEFAULT_TYPES]
     ).default([...DEFAULT_TYPES]),
     threshold: z.number().int().positive(),
     exclude: z.array(objectIDSchema).default([]),
