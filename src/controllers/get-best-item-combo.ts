@@ -1,89 +1,61 @@
-import { ObjectId } from "@db/mongo";
 import type { Context } from "@oak/oak";
-import { ALL_TYPES, DEFAULT_TYPES } from "../constants/item_types.ts";
 import Item from "../daos/Item.ts";
 import findBestCombination from "../helpers/best-item-combo.ts";
+import { BadRequest } from "../helpers/HttpError.ts";
+import type { BestItemComboBody } from "../schemas/best-item-combo.schema.ts";
 
-function validateTypes(
-  types: string[],
-): { validTypes: string[]; invalidTypes: string[] } {
-  const validTypes = types.filter((type) => ALL_TYPES.includes(type));
-  const invalidTypes = types.filter((type) => !ALL_TYPES.includes(type));
-  return { validTypes, invalidTypes };
-}
-
-function parseObjectIds(exclude: unknown): ObjectId[] {
-  if (!Array.isArray(exclude)) {
-    return [];
-  }
-
-  const validIds: ObjectId[] = [];
-  for (const item of exclude) {
-    if (typeof item === "string") {
-      validIds.push(new ObjectId(item));
-    }
-  }
-
-  return validIds.length ? validIds : [];
-}
-
-export default async function (ctx: Context) {
+export default async function handleCombinationRequest(
+  ctx: Context<{ body: BestItemComboBody }>,
+) {
   try {
-    const { types, threshold, exclude } = await ctx.request.body.json();
-    const { validTypes, invalidTypes } = validateTypes(types || []);
+    const { types, threshold, exclude, lock } = ctx.state.body;
 
-    const excludedIds = parseObjectIds(exclude);
-
-    if (typeof threshold !== "number") {
-      ctx.response.status = 400;
-      ctx.response.body = {
-        error: "Invalid threshold provided",
-        threshold,
-        message: "Threshold must be a valid number",
-      };
-      return;
+    const { lockedItems, missingIds } = await Item.validateLockedItems(
+      lock,
+    );
+    if (missingIds.length) {
+      throw new BadRequest(
+        `Items with provided IDs does not exist. Missing IDs: ${
+          missingIds.join(", ")
+        }`,
+      );
     }
 
-    const validThreshold = threshold | 0;
-
-    if (invalidTypes.length) {
-      ctx.response.status = 400;
-      ctx.response.body = {
-        error: "Invalid item types provided",
-        invalidTypes,
-        message: `Valid types are: ${ALL_TYPES.join(", ")}`,
-      };
-      return;
-    }
-
-    const items = await Item.aggregate([
+    const itemAggregation = await Item.aggregate([
       {
         $match: {
           $expr: {
-            $and: [
-              { $lt: ["$basePrice", threshold] },
-              { $lt: ["$lastLowPrice", "$basePrice"] },
-            ],
+            $and: [{ $lt: ["$basePrice", threshold] }, {
+              $lt: ["$lastLowPrice", "$basePrice"],
+            }],
           },
-          types: { $in: validTypes.length ? validTypes : DEFAULT_TYPES },
-          _id: { $nin: excludedIds },
+          types: { $in: types },
+          _id: { $nin: exclude },
         },
       },
     ]);
 
-    const result = findBestCombination(
-      items,
-      validThreshold,
+    const lockedTotals = lockedItems.reduce(
+      (acc, item) => {
+        acc.basePrice += item.basePrice;
+        acc.lastLowPrice += item.lastLowPrice;
+        return acc;
+      },
+      { basePrice: 0, lastLowPrice: 0 },
     );
 
-    ctx.response.body = result;
+    const result = findBestCombination(
+      itemAggregation,
+      threshold - lockedTotals.basePrice,
+      5 - lockedItems.length,
+    );
+
+    ctx.response.body = {
+      items: [...lockedItems, ...result.selectedItems],
+      basePrice: result.totalBasePrice + lockedTotals.basePrice,
+      fleaPrice: result.totalLastLowPrice + lockedTotals.lastLowPrice,
+    };
   } catch (err) {
-    if (String(err).includes("BadRequestError")) {
-      ctx.response.status = 400;
-      ctx.response.body = { message: "invalid body" };
-      return;
-    }
-    console.log(err);
-    ctx.response.status = 500;
+    throw err;
   }
 }
