@@ -1,4 +1,4 @@
-const ALL_TYPES = Object.freeze([
+const ALL_TYPES = [
     "barter",
     "container",
     "glasses",
@@ -8,12 +8,12 @@ const ALL_TYPES = Object.freeze([
     "mods",
     "pistolGrip",
     "suppressor",
-]);
+] as const;
 
-const DEFAULT_TYPES = Object.freeze([
+const DEFAULT_TYPES = [
     "barter",
     "container",
     "suppressor",
-]);
+] as const;
 
 export { ALL_TYPES, DEFAULT_TYPES };
