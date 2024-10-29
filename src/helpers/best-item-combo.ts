@@ -109,13 +109,13 @@ function getSelectedItems(
 export default function findBestCombination(
     items: Item[],
     minBasePrice: number,
+    maxItemCount: number = 5,
 ): {
     selectedItems: Item[];
     totalLastLowPrice: number;
     totalBasePrice: number;
 } {
     const maxBasePrice = minBasePrice + 10000;
-    const maxItemCount = 5;
 
     const lowerBasePriceLimit = Math.round(maxBasePrice / maxItemCount * 0.5);
     const upperBasePriceLimit = Math.round(maxBasePrice / maxItemCount * 1.5);
