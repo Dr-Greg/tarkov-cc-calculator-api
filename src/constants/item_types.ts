@@ -16,4 +16,6 @@ const DEFAULT_TYPES = [
     "suppressor",
 ] as const;
 
+export type AllTypes = typeof ALL_TYPES[number];
+
 export { ALL_TYPES, DEFAULT_TYPES };

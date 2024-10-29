@@ -1,21 +1,15 @@
-import type {
-    Collection,
-    Document,
-    Filter,
-    FindOptions,
-    ObjectId,
-} from "@db/mongo";
+import type { Collection, Document, FindOptions, ObjectId } from "@db/mongo";
 import database from "../services/Database.ts";
 
 class ItemDAO {
     private readonly collection: Collection<Item>;
 
     constructor() {
-        this.collection = database.getCollection("items");
+        this.collection = database.getCollection<Item>("items");
     }
 
     find(
-        filter: Filter<Item> = {},
+        filter = {},
         options: FindOptions = {},
     ): Promise<Array<Item>> {
         return this.collection.find(filter, options).toArray();
