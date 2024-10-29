@@ -18,3 +18,5 @@ coverage/
 
 # Ignore IDE or editor files
 .vscode/
+
+/db/
