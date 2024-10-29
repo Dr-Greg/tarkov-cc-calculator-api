@@ -6,6 +6,7 @@ export default async function (ctx: Context) {
     const items = await Item.find();
     ctx.response.body = items;
   } catch (err) {
-    console.log(err);
+    console.error("[getAllItems] -", err);
+    throw err;
   }
 }

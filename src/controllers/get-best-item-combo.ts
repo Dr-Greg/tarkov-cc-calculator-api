@@ -56,6 +56,7 @@ export default async function handleCombinationRequest(
       fleaPrice: result.totalLastLowPrice + lockedTotals.lastLowPrice,
     };
   } catch (err) {
+    console.error("[getBestItemCombo] -", err);
     throw err;
   }
 }

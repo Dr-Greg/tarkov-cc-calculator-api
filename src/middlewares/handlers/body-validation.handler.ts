@@ -8,12 +8,14 @@ const validateBody = <T>(schema: ZodSchema) => {
 
         try {
             body = await ctx.request.body.json();
-        } catch (_) {
+        } catch (err) {
+            console.error("[validateBody] - Invalid JSON format", err);
             throw new BadRequest("Invalid JSON format");
         }
 
         const parsed = schema.safeParse(body);
         if (!parsed.success) {
+            console.error("[validateBody] -", parsed.error.errors);
             throw new BadRequest("Validation failed", parsed.error.errors);
         }
 
