@@ -117,8 +117,8 @@ export default function findBestCombination(
 } {
     const maxBasePrice = minBasePrice + 10000;
 
-    const lowerBasePriceLimit = Math.round(maxBasePrice / maxItemCount * 0.5);
-    const upperBasePriceLimit = Math.round(maxBasePrice / maxItemCount * 1.5);
+    const lowerBasePriceLimit = Math.round(maxBasePrice / maxItemCount * 0.8);
+    const upperBasePriceLimit = Math.round(maxBasePrice / maxItemCount * 1.2);
 
     const filteredItems = filterItemsByBasePrice(
         items,
