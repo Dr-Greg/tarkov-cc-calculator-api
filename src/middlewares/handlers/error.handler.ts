@@ -6,7 +6,10 @@ export default async function errorHandler(ctx: Context, next: Next) {
     try {
         await next();
     } catch (err) {
-        if (err instanceof HttpError) {
+        if (err instanceof InternalServerError) {
+            Logger.error("Internal Server Error", err).write();
+            ctx.response.status = err.statusCode;
+        } else if (err instanceof HttpError) {
             ctx.response.status = err.statusCode;
             const responseBody: { message: string; details?: unknown } = {
                 message: err.message,
@@ -16,12 +19,8 @@ export default async function errorHandler(ctx: Context, next: Next) {
             }
             ctx.response.body = responseBody;
         } else {
-            Logger.error("Unhandled error:", err).write();
-            const internalError = new InternalServerError(
-                "An unexpected error occurred",
-            );
-            ctx.response.status = internalError.statusCode;
-            ctx.response.body = { message: internalError.message };
+            Logger.error("Unhandled error", err).write();
+            ctx.response.status = 500;
         }
     }
 }
