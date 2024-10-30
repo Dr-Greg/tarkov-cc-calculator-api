@@ -1,5 +1,6 @@
 import type { Context } from "@oak/oak";
 import Item from "../daos/Item.ts";
+import Logger from "../helpers/Logger.ts";
 import type { GetItemsBody } from "../schemas/get-items.schema.ts";
 
 export default async function (ctx: Context<{ body: GetItemsBody }>) {
@@ -13,7 +14,7 @@ export default async function (ctx: Context<{ body: GetItemsBody }>) {
 
     ctx.response.body = items;
   } catch (err) {
-    console.error("[getItemsWithFilters] -", err);
+    Logger.warn("[getItemsWithFilters] -", err);
     throw err;
   }
 }

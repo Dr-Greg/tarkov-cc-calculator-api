@@ -1,5 +1,6 @@
 import { Collection, Database, type Document, MongoClient } from "@db/mongo";
 import { config } from "../config.ts";
+import Logger from "../helpers/Logger.ts";
 
 class DatabaseService {
   private client: MongoClient = new MongoClient();
@@ -19,6 +20,11 @@ class DatabaseService {
 }
 
 const database = new DatabaseService();
-await database.connect();
+try {
+  await database.connect();
+} catch (err) {
+  Logger.error("Failed to connect to database", err);
+  Deno.exit(1);
+}
 
 export default database;

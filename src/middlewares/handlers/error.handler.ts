@@ -1,5 +1,6 @@
 import type { Context, Next } from "@oak/oak";
 import { HttpError, InternalServerError } from "../../helpers/HttpError.ts";
+import Logger from "../../helpers/Logger.ts";
 
 export default async function errorHandler(ctx: Context, next: Next) {
     try {
@@ -15,7 +16,7 @@ export default async function errorHandler(ctx: Context, next: Next) {
             }
             ctx.response.body = responseBody;
         } else {
-            console.error("Unhandled error:", err);
+            Logger.error("Unhandled error:", err).write();
             const internalError = new InternalServerError(
                 "An unexpected error occurred",
             );

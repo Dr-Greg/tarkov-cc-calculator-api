@@ -2,6 +2,7 @@ import type { Context } from "@oak/oak";
 import Item from "../daos/Item.ts";
 import findBestCombination from "../helpers/best-item-combo.ts";
 import { BadRequest } from "../helpers/HttpError.ts";
+import Logger from "../helpers/Logger.ts";
 import type { BestItemComboBody } from "../schemas/best-item-combo.schema.ts";
 
 export default async function handleCombinationRequest(
@@ -56,7 +57,7 @@ export default async function handleCombinationRequest(
       fleaPrice: result.totalLastLowPrice + lockedTotals.lastLowPrice,
     };
   } catch (err) {
-    console.error("[getBestItemCombo] -", err);
+    Logger.warn("[getBestItemCombo] -", err);
     throw err;
   }
 }
