@@ -1,8 +1,9 @@
 {
   "imports": {
+    "@db/mongo": "https://deno.land/x/mongo@v0.32.0/mod.ts",
     "@oak/oak": "jsr:@oak/oak@^17.1.0",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.2",
-    "@db/mongo": "https://deno.land/x/mongo@v0.32.0/mod.ts",
+    "@std/log": "jsr:@std/log@^0.224.9",
     "zod": "https://deno.land/x/zod@v3.23.8/mod.ts"
   }
 }
