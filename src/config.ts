@@ -1,4 +1,5 @@
 import "@std/dotenv/load";
+import { type LevelName, LogLevels } from "@std/log";
 
 class ConfigError extends Error {
   constructor(message: string) {
@@ -9,9 +10,11 @@ class ConfigError extends Error {
 
 function parseConf() {
   try {
-    const mongoConnectionUri = Deno.env.get("MONGO_CONNECTION_URI");
-
+    const logLevel = (Deno.env.get("LOG_LEVEL") || "").trim()
+      .toUpperCase();
+    const logFilePath = Deno.env.get("LOG_FILE_PATH") || "./logs/app.log";
     const port = Number(Deno.env.get("PORT")) || 8042;
+    const mongoConnectionUri = Deno.env.get("MONGO_CONNECTION_URI");
 
     if (!mongoConnectionUri) {
       throw new ConfigError(
@@ -25,6 +28,10 @@ function parseConf() {
       },
       server: {
         port,
+        logLevel: (Object.keys(LogLevels).includes(logLevel!)
+          ? logLevel
+          : "DEBUG") as LevelName,
+        logFilePath,
       },
     };
   } catch (err) {
