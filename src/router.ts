@@ -13,6 +13,10 @@ router.get("/health", (ctx: Context) => {
   ctx.response.body = { health: "OK" };
 });
 
+router.get("/status", (ctx: Context) => {
+  ctx.response.body = { health: "OK" };
+});
+
 router.get("/", getAllItems).post(
   "/",
   validateBody(getItemsBodySchema),
